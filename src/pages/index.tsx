@@ -41,16 +41,16 @@ export default function Home() {
           className="flex min-h-screen w-full flex-col items-center justify-start"
         >
           <Divider />
-          <div className="flex w-full flex-1 flex-col items-center justify-stretch gap-5 md:gap-10  p-5 md:p-10 lg:p-20 lg:pt-10">
+          <div className="flex w-full flex-1 flex-col items-center justify-stretch gap-5 p-5  md:gap-10 md:p-10 lg:p-20 lg:pt-10">
             <SignedIn>
               <CreatePostWizard />
             </SignedIn>
-            <div className="flex w-full max-w-[500px] flex-col items-center justify-center gap-1 rounded-md border border-slate-200 border-opacity-30 bg-slate-200 bg-opacity-10 py-2.5">
+            <div className="flex w-full max-w-[500px] flex-col items-center justify-center gap-1 rounded-md border border-slate-200 border-opacity-30 bg-slate-200 bg-opacity-10 ">
               {!isLoading ? (
                 data ? (
                   data.map((post, index) => (
                     <div
-                      className="w-full items-center justify-start bg-red-300/50 p-2"
+                      className="w-full items-center justify-start  p-2"
                       key={index}
                     >
                       {post.content}
