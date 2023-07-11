@@ -8,7 +8,7 @@ import {
 
 function Navbar() {
   return (
-    <nav className="fixed flex h-20 w-full items-center justify-center border-b border-slate-200 border-opacity-30 bg-slate-200 bg-opacity-10">
+    <nav className="fixed z-50 flex h-20 w-full items-center justify-center border-b border-slate-200 border-opacity-30 bg-slate-200 bg-opacity-10 backdrop-blur-sm">
       <div className="flex w-full max-w-[1700px] items-center justify-between px-5">
         <span className="select-none text-4xl hue-rotate-[190deg]">😼</span>
         <div>

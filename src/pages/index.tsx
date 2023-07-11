@@ -1,17 +1,20 @@
-import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
+import { SignInButton, SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { useState } from "react";
 import Divider from "~/components/utils/Divider";
-import { RouterOutputs, api } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
 import dayjs from "dayjs";
 
 import relativeTime from "dayjs/plugin/relativeTime";
 import LoadingSpinner from "~/components/utils/LoadingSpinner";
 import CommentIcon from "~/components/utils/CommentIcon";
+import { toast } from "react-hot-toast";
 
 type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 const PostView = (props: PostWithUser) => {
   const { post, author } = props;
+
   return (
     <div className="flex w-full items-stretch justify-start gap-2.5 p-2.5">
       <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full">
@@ -46,13 +49,13 @@ function Feed() {
 
   if (!data)
     return (
-      <div className="flex w-full max-w-[500px] items-center justify-center rounded-md border border-slate-200 border-opacity-30 bg-slate-200 bg-opacity-10 p-2.5">
+      <div className="flex  w-full max-w-[500px] items-center justify-center overflow-y-auto rounded-md border border-slate-200 border-opacity-30 bg-slate-200 bg-opacity-10 p-2.5">
         Something went wrong
       </div>
     );
 
   return (
-    <div className="flex min-h-[44px] w-full max-w-[500px] flex-col items-center justify-center gap-1 rounded-md border border-slate-200 border-opacity-30 bg-slate-200 bg-opacity-10 ">
+    <div className="flex max-h-[600px] min-h-[44px] w-full max-w-[500px] flex-col items-center justify-start gap-1 overflow-y-auto rounded-md border border-slate-200 border-opacity-30 bg-slate-200 bg-opacity-10 p-2.5 ">
       {data.map((fullPost, index) => (
         <PostView {...fullPost} key={index} />
       ))}
@@ -70,6 +73,15 @@ const CreatePostWizard = () => {
       setuserInput("");
       ctx.posts.getAll.invalidate();
     },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      console.log(errorMessage);
+      if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Something went wrong.");
+      }
+    },
   });
 
   function handleInput() {
@@ -81,7 +93,7 @@ const CreatePostWizard = () => {
       <SignedIn>
         <input
           type="text"
-          placeholder="Type some emojis!"
+          placeholder="Type some emojies!"
           className="w-full bg-transparent outline-none"
           value={userInput}
           maxLength={250}
@@ -93,12 +105,18 @@ const CreatePostWizard = () => {
             }
           }}
         />
-        <span>{userInput.length}/250</span>
-        <button onClick={() => handleInput()}>
-          <CommentIcon />
-        </button>
+        <span className="opacity-50">{userInput.length}/250</span>
+        <div>
+          {!isPosting && (
+            <button onClick={() => handleInput()} disabled={isPosting}>
+              <CommentIcon />
+            </button>
+          )}
+        </div>
       </SignedIn>
-      <SignedOut>Sign in to create posts!</SignedOut>
+      <SignedOut>
+        <SignInButton mode="modal">Sign in to create posts!</SignInButton>
+      </SignedOut>
     </div>
   );
 };
@@ -126,10 +144,10 @@ export default function Home() {
     <div className="flex w-full flex-col items-center justify-start">
       <section
         id="#"
-        className="flex min-h-screen w-full flex-col items-center justify-start"
+        className="flex h-screen  w-full flex-col items-center justify-start"
       >
         <Divider />
-        <div className="flex w-full flex-1 flex-col items-center justify-stretch gap-5 p-5  md:gap-10 md:p-10 lg:p-20 lg:pt-10">
+        <div className="flex w-full flex-1 flex-col items-center justify-center gap-5 p-5 md:gap-10 md:p-10 lg:p-20 lg:pt-10">
           <CreatePostWizard />
           <Feed />
         </div>
