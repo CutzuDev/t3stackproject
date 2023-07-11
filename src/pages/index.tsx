@@ -1,5 +1,4 @@
 import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
-import Head from "next/head";
 import Image from "next/image";
 import { useState } from "react";
 import Divider from "~/components/utils/Divider";
@@ -8,6 +7,7 @@ import dayjs from "dayjs";
 
 import relativeTime from "dayjs/plugin/relativeTime";
 import LoadingSpinner from "~/components/utils/LoadingSpinner";
+import CommentIcon from "~/components/utils/CommentIcon";
 
 type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 const PostView = (props: PostWithUser) => {
@@ -61,7 +61,20 @@ function Feed() {
 }
 
 const CreatePostWizard = () => {
-  const [searhVal, setsearhVal] = useState("");
+  const [userInput, setuserInput] = useState<string>("");
+
+  const ctx = api.useContext();
+
+  const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
+    onSuccess: () => {
+      setuserInput("");
+      ctx.posts.getAll.invalidate();
+    },
+  });
+
+  function handleInput() {
+    mutate({ content: userInput });
+  }
 
   return (
     <div className="flex w-full max-w-[500px] items-center justify-center gap-2.5 rounded-md border border-slate-200 border-opacity-30 bg-slate-200 bg-opacity-10 p-2.5">
@@ -70,10 +83,20 @@ const CreatePostWizard = () => {
           type="text"
           placeholder="Type some emojis!"
           className="w-full bg-transparent outline-none"
+          value={userInput}
           maxLength={250}
-          onChange={(event) => setsearhVal(event.target.value)}
+          disabled={isPosting}
+          onChange={(event) => setuserInput(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key == "Enter") {
+              handleInput();
+            }
+          }}
         />
-        <span>{searhVal.length}/250</span>
+        <span>{userInput.length}/250</span>
+        <button onClick={() => handleInput()}>
+          <CommentIcon />
+        </button>
       </SignedIn>
       <SignedOut>Sign in to create posts!</SignedOut>
     </div>
