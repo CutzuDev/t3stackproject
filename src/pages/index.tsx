@@ -53,11 +53,9 @@ function Feed() {
 
   return (
     <div className="flex min-h-[44px] w-full max-w-[500px] flex-col items-center justify-center gap-1 rounded-md border border-slate-200 border-opacity-30 bg-slate-200 bg-opacity-10 ">
-      {data ? (
-        data.map((fullPost, index) => <PostView {...fullPost} key={index} />)
-      ) : (
-        <div>Something went wrong</div>
-      )}
+      {data.map((fullPost, index) => (
+        <PostView {...fullPost} key={index} />
+      ))}
     </div>
   );
 }
