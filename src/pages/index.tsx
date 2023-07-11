@@ -106,12 +106,13 @@ const CreatePostWizard = () => {
           }}
         />
         <span className="opacity-50">{userInput.length}/250</span>
-        <div>
+        <div className="flex items-center justify-center">
           {!isPosting && (
             <button onClick={() => handleInput()} disabled={isPosting}>
               <CommentIcon />
             </button>
           )}
+          {isPosting && <LoadingSpinner />}
         </div>
       </SignedIn>
       <SignedOut>
